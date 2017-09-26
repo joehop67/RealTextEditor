@@ -157,7 +157,7 @@ public class TextEditor{
 //            dialog.showDialog(frame, "This is a test");
 //        }
 //    };
-
+//    TODO: Lets add this terminal in somehow
 //    Action Term = new AbstractAction("Term") {
 //        public void actionPerformed(ActionEvent e) {
 //            System.out.println("Test");
@@ -239,18 +239,24 @@ public class TextEditor{
 
     private void readInFile(String filename){
         try{
-            FileReader r = new FileReader(filename);
-            if (currentFile == "untitled" && changed == false){
-                area.read(r, null);
-                pane.setTitleAt(0, filename);
+            File fileCheck = new File(filename);
+            if (fileCheck.isDirectory()){
+                JOptionPane.showMessageDialog(frame, "Cannot open directory in editor");
+                return;
             } else {
-                newTab(r, filename);
+                FileReader r = new FileReader(filename);
+                if (currentFile == "untitled" && changed == false){
+                    area.read(r, null);
+                    pane.setTitleAt(0, filename);
+                } else {
+                    newTab(r, filename);
+                }
+                r.close();
+                currentFile = filename;
+                frame.setTitle(currentFile);
+                changed = false;
+                JOptionPane.showMessageDialog(frame, checkFileType(filename));
             }
-            r.close();
-            currentFile = filename;
-            frame.setTitle(currentFile);
-            changed = false;
-            JOptionPane.showMessageDialog(frame, checkFileType(filename));
         } catch (IOException e){
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(frame, "Editor cannot find file called " + filename);
@@ -340,10 +346,21 @@ public class TextEditor{
         projectDir.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
+                String jTreeVarSelectedPath = "";
+                Object[] paths = projectDir.getSelectionPath().getPath();
+                for (int i=0; i<paths.length; i++) {
+                    jTreeVarSelectedPath += paths[i];
+                    if (i+1 <paths.length ) {
+                        jTreeVarSelectedPath += File.separator;
+                    }
+                }
+
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode)projectDir.getLastSelectedPathComponent();
                 if(node != null){
                     Object nodeObject = node.getUserObject();
-                    readInFile(System.getProperty("user.dir") + "/" + nodeObject);
+
+                    readInFile(fileRoot.getParent() + File.separator + jTreeVarSelectedPath);
+                    //readInFile(System.getProperty("user.dir") + "/" + nodeObject);
                 }
             }
         });
