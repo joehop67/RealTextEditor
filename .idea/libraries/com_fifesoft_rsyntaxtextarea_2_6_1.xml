@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="com.fifesoft:rsyntaxtextarea:2.6.1" type="repository">
+    <properties maven-id="com.fifesoft:rsyntaxtextarea:2.6.1" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/rsyntaxtextarea-2.6.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/darcula.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/weblaf-complete-1.29.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jterminal-1.0.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jediterm-pty-2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="com.fifesoft:languagesupport:2.6.0" type="repository">
+    <properties maven-id="com.fifesoft:languagesupport:2.6.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/languagesupport-2.6.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rsyntaxtextarea-2.6.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/autocomplete-2.6.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rhino-1.7.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
