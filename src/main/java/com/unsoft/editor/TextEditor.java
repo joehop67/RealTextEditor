@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Map;
 //import java.util.ConcurrentModificationException;
 import javax.swing.*;
 
@@ -21,6 +22,8 @@ import com.alee.laf.*;
 //import com.jediterm.terminal.ui.settings.SettingsProvider;
 import com.unsoft.editor.com.unsoft.editor.files.CreateChildNodes;
 import com.unsoft.editor.com.unsoft.editor.files.FileNode;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
 import org.fife.rsta.ac.*;
 import org.fife.rsta.ac.c.CLanguageSupport;
 import org.fife.ui.rtextarea.*;
@@ -91,6 +94,7 @@ public class TextEditor{
         file.add(Quit);
         file.addSeparator();
         file.add(Compile);
+        file.add(BuildAnt);
 
         for(int i = 0; i < 4; i++)
             file.getItem(i).setIcon(null);
@@ -191,6 +195,13 @@ public class TextEditor{
         @Override
         public void actionPerformed(ActionEvent e) {
             Compile();
+        }
+    };
+
+    Action BuildAnt = new AbstractAction("Build Ant") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            buildAnt();
         }
     };
 
@@ -421,6 +432,29 @@ public class TextEditor{
         }
         System.out.println("Success:" + success);
         System.out.println(diagnostics.getDiagnostics());
+    }
+
+    private void buildAnt(){
+        ProcessBuilder pb = new ProcessBuilder();
+        Map env = pb.environment();
+        String path = env.get("ANT_HOME").toString();
+        System.out.println(path);
+        pb.directory(new File(System.getProperty("user.dir")));
+        pb.command(path + System.getProperty("file.separator")
+                + "bin" + System.getProperty("file.separator") + "ant");
+        try {
+            Process p = pb.start();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+//        File buildFile = new File(System.getProperty("user.dir") + File.separator + "build.xml");
+//        Project project = new Project();
+//        project.setUserProperty("ant.file", buildFile.getAbsolutePath());
+//        project.init();
+//        ProjectHelper helper = ProjectHelper.getProjectHelper();
+//        project.addReference("ant.projectHelper", helper);
+//        helper.parse(project, buildFile);
+//        project.executeTarget(project.getDefaultTarget());
     }
 
     public static void main(String[] arg){

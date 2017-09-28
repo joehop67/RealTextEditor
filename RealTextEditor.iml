@@ -16,5 +16,6 @@
     <orderEntry type="library" name="guava-14.0.1" level="project" />
     <orderEntry type="library" name="com.fifesoft:autocomplete:2.6.0" level="project" />
     <orderEntry type="library" name="com.fifesoft:languagesupport:2.6.0" level="project" />
+    <orderEntry type="library" name="ant-contrib:ant-contrib:1.0b2" level="project" />
   </component>
 </module>
