@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 //import java.util.ConcurrentModificationException;
@@ -22,6 +23,7 @@ import com.alee.laf.*;
 //import com.jediterm.terminal.ui.settings.SettingsProvider;
 import com.unsoft.editor.com.unsoft.editor.files.CreateChildNodes;
 import com.unsoft.editor.com.unsoft.editor.files.FileNode;
+import com.unsoft.editor.com.unsoft.editor.files.ProcessBuilderWrapper;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.fife.rsta.ac.*;
@@ -47,15 +49,16 @@ import static org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_C;
 import static org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_JAVA;
 
 public class TextEditor{
-    public static JFrame frame = new JFrame();
+    private static JFrame frame = new JFrame();
     private static JTabbedPane pane = new JTabbedPane();
     private RSyntaxTextArea area = new RSyntaxTextArea(20,120);
-    FileNameExtensionFilter filter = new FileNameExtensionFilter("java Files", "java", "xml");
+    private FileNameExtensionFilter filter = new FileNameExtensionFilter("java Files", "java", "xml");
     private JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
     private String currentFile = "untitled";
     private boolean changed = false;
     private JTree projectDir;
     private DefaultMutableTreeNode node;
+    private JTextArea console;
 
     public TextEditor(){
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -65,6 +68,10 @@ public class TextEditor{
         frame.add(pane, BorderLayout.CENTER);
         pane.addTab(currentFile, scroll);
         setTheme(area);
+        console = new JTextArea(5, 120);
+        console.setEditable(false);
+        JScrollPane consolePanel = new JScrollPane(console);
+        frame.add(consolePanel, BorderLayout.SOUTH);
 
         initTreeView();
 
@@ -435,18 +442,28 @@ public class TextEditor{
     }
 
     private void buildAnt(){
-        ProcessBuilder pb = new ProcessBuilder();
-        Map env = pb.environment();
-        String path = env.get("ANT_HOME").toString();
-        System.out.println(path);
-        pb.directory(new File(System.getProperty("user.dir")));
-        pb.command(path + System.getProperty("file.separator")
-                + "bin" + System.getProperty("file.separator") + "ant");
+        ArrayList cmd = new ArrayList();
+        String path = System.getenv("ANT_HOME");
+        cmd.add(path + File.separator + "bin" + File.separator + "ant");
         try {
-            Process p = pb.start();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            ProcessBuilderWrapper pbd = new ProcessBuilderWrapper(new File(System.getProperty("user.dir")), cmd);
+            console.append(pbd.getErrors());
+            console.append(pbd.getInfos());
+            console.updateUI();
+        }catch (Exception e){
+            e.printStackTrace();
         }
+//        ProcessBuilder pb = new ProcessBuilder();
+//        Map env = pb.environment();
+//        System.out.println(path);
+//        pb.directory(new File(System.getProperty("user.dir")));
+//        pb.command(path + System.getProperty("file.separator")
+//                + "bin" + System.getProperty("file.separator") + "ant");
+//        try {
+//            Process p = pb.start();
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
 //        File buildFile = new File(System.getProperty("user.dir") + File.separator + "build.xml");
 //        Project project = new Project();
 //        project.setUserProperty("ant.file", buildFile.getAbsolutePath());
