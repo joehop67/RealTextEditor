@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 //import java.util.ConcurrentModificationException;
 import javax.swing.*;
 
@@ -37,8 +38,10 @@ import javax.swing.text.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
+import javax.tools.*;
 
 import static org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_C;
+import static org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_JAVA;
 
 public class TextEditor{
     public static JFrame frame = new JFrame();
@@ -53,7 +56,7 @@ public class TextEditor{
 
     public TextEditor(){
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        area.setSyntaxEditingStyle(SYNTAX_STYLE_C);
+        area.setSyntaxEditingStyle(SYNTAX_STYLE_JAVA);
         area.setCodeFoldingEnabled(true);
         RTextScrollPane scroll = new RTextScrollPane(area, true);
         frame.add(pane, BorderLayout.CENTER);
@@ -63,8 +66,7 @@ public class TextEditor{
         initTreeView();
 
         LanguageSupportFactory lsf = LanguageSupportFactory.get();
-        LanguageSupport support = lsf.getSupportFor(SYNTAX_STYLE_C);
-        CLanguageSupport cls = (CLanguageSupport) support;
+        LanguageSupport support = lsf.getSupportFor(SYNTAX_STYLE_JAVA);
 
         initEditor(area, lsf);
 
@@ -88,7 +90,7 @@ public class TextEditor{
         file.add(SaveAs);
         file.add(Quit);
         file.addSeparator();
-
+        file.add(Compile);
 
         for(int i = 0; i < 4; i++)
             file.getItem(i).setIcon(null);
@@ -182,6 +184,13 @@ public class TextEditor{
             if(dialog.showSaveDialog(null) == JFileChooser.APPROVE_OPTION){
                 createFile(dialog.getSelectedFile().getAbsolutePath());
             }
+        }
+    };
+
+    Action Compile = new AbstractAction("Compile") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Compile();
         }
     };
 
@@ -373,6 +382,45 @@ public class TextEditor{
         } catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+
+    private void Compile(){
+        File project = new File(System.getProperty("user.dir"));
+        FilenameFilter filter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                if(name.lastIndexOf('.') > 0){
+                    int lastIndex = name.lastIndexOf('.');
+                    String str = name.substring(lastIndex);
+
+                    if(str.equals(".java")){
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+        File[] listOfFiles = project.listFiles(filter);
+        String[] paths = new String[listOfFiles.length];
+        for(int i = 0; i < listOfFiles.length; i++){
+            String path = listOfFiles[i].getAbsolutePath();
+            paths[i] = path;
+        }
+
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+        StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+        Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromStrings(Arrays.asList(paths));
+        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
+        boolean success = task.call();
+        try{
+            fileManager.close();
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+        System.out.println("Success:" + success);
+        System.out.println(diagnostics.getDiagnostics());
     }
 
     public static void main(String[] arg){
