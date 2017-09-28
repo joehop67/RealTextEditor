@@ -7,19 +7,19 @@ Hi there! I'm not quite sure how you might have stumbled upon this project, but 
 What is it? Well, it's exactly what it says it is. It's a text editor, that's definitely real. Okay, it's more than that. Even in it's very limited state it's a fair bit more advanced than the Notepad clone I had started out with. It's an IDE that is, currently (subject to change at any given point) used for working with Java programs. Basically, it's a way to kill time while I try to find a job. I called it Unsoft because I'm writing software while *UN*employed. Original, eh?
 
 #### Current Features:
- > -Basic input and output of files (obviously)
- -Syntax highlighting
- -Basic Java compilation
- -Ability to set project directory
+ > -Basic input and output of files (obviously)  
+ > -Syntax highlighting  
+ > -Basic Java compilation  
+ > -Ability to set project directory  
  
 #### TODO:
- > -Add in functioning terminal (My white whale)
- -Write tests (not my thing, maybe later)
- -Integrate Java build tools
- -Ability to create projects
- -Autocomplete and dynamic type and syntax checking
- -Output console
- -Debugger
+ > -Add in functioning terminal (My white whale)  
+ > -Write tests (not my thing, maybe later)  
+ > -Integrate Java build tools  
+ > -Ability to create projects  
+ > -Autocomplete and dynamic type and syntax checking  
+ > -Output console  
+ > -Debugger  
  
  
  As you can see, there is still a lot I want to do with this because I think it's cool, I'm doig really interesting work, and it's a good way to kill boredom while I search for a job.
