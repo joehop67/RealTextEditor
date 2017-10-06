@@ -17,5 +17,6 @@
     <orderEntry type="library" name="com.fifesoft:autocomplete:2.6.0" level="project" />
     <orderEntry type="library" name="com.fifesoft:languagesupport:2.6.0" level="project" />
     <orderEntry type="library" name="ant-contrib:ant-contrib:1.0b2" level="project" />
+    <orderEntry type="library" name="maven-invoker-2.1.1" level="project" />
   </component>
 </module>

@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 //import java.util.ConcurrentModificationException;
 import javax.swing.*;
@@ -24,10 +25,12 @@ import com.alee.laf.*;
 import com.unsoft.editor.com.unsoft.editor.files.CreateChildNodes;
 import com.unsoft.editor.com.unsoft.editor.files.FileNode;
 import com.unsoft.editor.com.unsoft.editor.files.ProcessBuilderWrapper;
+import org.apache.maven.shared.invoker.*;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.fife.rsta.ac.*;
 import org.fife.rsta.ac.c.CLanguageSupport;
+import org.fife.rsta.ac.java.JavaLanguageSupport;
 import org.fife.ui.rtextarea.*;
 import org.fife.ui.rsyntaxtextarea.*;
 //import com.bulenkov.darcula.*;
@@ -77,6 +80,13 @@ public class TextEditor{
 
         LanguageSupportFactory lsf = LanguageSupportFactory.get();
         LanguageSupport support = lsf.getSupportFor(SYNTAX_STYLE_JAVA);
+        JavaLanguageSupport jls = (JavaLanguageSupport)support;
+
+        try{
+            jls.getJarManager().addCurrentJreClassFileSource();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
 
         initEditor(area, lsf);
 
@@ -102,6 +112,7 @@ public class TextEditor{
         file.addSeparator();
         file.add(Compile);
         file.add(BuildAnt);
+        //file.add(BuildMaven);
 
         for(int i = 0; i < 4; i++)
             file.getItem(i).setIcon(null);
@@ -164,12 +175,7 @@ public class TextEditor{
         }
     };
 
-//    Action Help = new AbstractAction() {
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            dialog.showDialog(frame, "This is a test");
-//        }
-//    };
+
 //    TODO: Lets add this terminal in somehow
 //    Action Term = new AbstractAction("Term") {
 //        public void actionPerformed(ActionEvent e) {
@@ -182,12 +188,6 @@ public class TextEditor{
 //        }
 //    };
 
-//    Action SetDir = new AbstractAction() {
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            new OnOpenDialog();
-//        }
-//    };
 
     Action New = new AbstractAction("New", new ImageIcon("images/new.gif")) {
         public void actionPerformed(ActionEvent e) {
@@ -211,6 +211,14 @@ public class TextEditor{
             buildAnt();
         }
     };
+
+    //TODO: Goes with build Maven method, will add back in eventually
+//    Action BuildMaven = new AbstractAction("Build Maven") {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//            buildMaven();
+//        }
+//    };
 
     Action Open = new AbstractAction("Open", new ImageIcon("images/open.gif")) {
         public void actionPerformed(ActionEvent e) {
@@ -348,7 +356,7 @@ public class TextEditor{
 
 
     private void initEditor(RSyntaxTextArea area, LanguageSupportFactory lsf){
-        lsf.register(area);
+        LanguageSupportFactory.get().register(area);
         area.setCaretPosition(0);
         area.requestFocusInWindow();
         area.setMarkOccurrences(true);
@@ -437,8 +445,8 @@ public class TextEditor{
         } catch(IOException e){
             e.printStackTrace();
         }
-        System.out.println("Success:" + success);
-        System.out.println(diagnostics.getDiagnostics());
+        console.append("Success:" + success + "/n");
+        console.append(diagnostics.getDiagnostics().toString());
     }
 
     private void buildAnt(){
@@ -473,6 +481,26 @@ public class TextEditor{
 //        helper.parse(project, buildFile);
 //        project.executeTarget(project.getDefaultTarget());
     }
+
+
+    //TODO: Add in Maven build when we can figure out this dependency issue
+//    private void buildMaven(){
+//        InvocationRequest request = new DefaultInvocationRequest();
+//        request.setPomFile(new File(System.getProperty("user.dir") + File.separator + "pom.xml"));
+//        request.setGoals(Collections.singletonList("build"));
+//
+//        Invoker invoker = new DefaultInvoker();
+//        try {
+//            InvocationResult result = invoker.execute(request);
+//
+//            if (result.getExitCode() != 0){
+//                throw new IllegalStateException("build failed");
+//            }
+//        } catch(MavenInvocationException e){
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     public static void main(String[] arg){
         SwingUtilities.invokeLater(new Runnable() {
